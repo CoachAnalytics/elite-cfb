@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>(function () { let t = 'dark'; try { t = localStorage.getItem('ca-theme') || 'dark'; } catch (e) {}
+  document.documentElement.dataset.theme = t; })();</script>
+<title>Team Analytics | CoachAnalytics</title>
+<link rel="icon" type="image/png" href="../assets/brand/favicon.png">
+<link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Montserrat:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=20260925213907">
+<script>
+// How far this page sits below the site root, for the paths in the data files.
+window.CA_UP = '../';
+
+// Every data request is stamped with this build, so a copy cached from an
+// earlier build is never reused, and is retried if the download is cut short
+// (this machine's antivirus sometimes drops larger local transfers).
+const _fetch = window.fetch;
+window.fetch = async (url, opts) => {
+  // only our own files are stamped: adding it to another site's request (the
+  // members API, say) would arrive as an unexpected query parameter
+  const raw = typeof url === 'string' ? url : null;
+  const ours = raw !== null && !raw.includes('://');
+  if (!ours) return _fetch(url, opts);
+  const stamped = raw + (raw.includes('?') ? '&' : '?') + 'v=20260925213907';
+  let last;
+  // a cut-off transfer is worth several more goes: on this machine the
+  // antivirus drops roughly one large local download in three
+  for (let attempt = 0; attempt < 10; attempt++) {
+    try {
+      const r = await _fetch(stamped, opts);
+      // read as bytes: reading a picture or a gzip as text would mangle it
+      const body = await r.arrayBuffer();
+      return new Response(body, { status: r.status, statusText: r.statusText, headers: r.headers });
+    } catch (e) {
+      last = e;
+      await new Promise(done => setTimeout(done, Math.min(250 * (attempt + 1), 2000)));
+    }
+  }
+  throw last;
+};
+</script>
+</head><body>
+<header class="site">
+  <a class="brand" href="../index.html" aria-label="CoachAnalytics home">
+    <img class="mark" src="../assets/brand/mark.png" alt="">
+    <img class="word" src="../assets/brand/wordmark.png" alt="CoachAnalytics">
+    <span class="tier">POWER 4</span></a>
+  <nav><a href="../stats/index.html" class="">Statistics</a><a href="../standings/index.html" class="">Standings</a><a href="../rankings/index.html" class="">Rankings</a><a href="../games/index.html" class="">Games</a><a href="../teams/index.html" class="active">Teams</a><a href="../positions/index.html" class="">Positions</a><a href="../players/index.html" class="">Players</a><a href="../situations/index.html" class="">Situations</a></nav>
+  <a class="adv-btn " href="../advanced/team.html" id="adv-btn"
+     aria-expanded="false" aria-controls="adv-menu">Advanced Analytics</a>
+  <a class="signin-btn" id="signin-btn" href="../members/index.html">Sign in</a>
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch between light and dark mode">
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  </button>
+</header>
+<nav class="subnav" id="adv-menu"><a href="../advanced/team.html" class="">Team Profile</a><a href="../advanced/red_zone.html" class="">Red Zone</a><a href="../advanced/short_yardage.html" class="">Short Yardage</a><a href="../advanced/third_down.html" class="">Third Down</a><a href="../advanced/early_downs.html" class="">Early Downs</a><a href="../advanced/second_half.html" class="">Second Half</a><a href="../advanced/fourth_quarter.html" class="">Fourth Quarter</a><a href="../advanced/after_play.html" class="">What Happens</a><a href="../advanced/drives.html" class="">Drive Analysis</a><a href="../advanced/player_splits.html" class="">Player Splits</a><a href="../advanced/strengths.html" class="">Strengths</a><a href="../advanced/matchup.html" class="">Matchup</a><a href="../advanced/chart.html" class="">Chart Builder</a></nav>
+<script>
+// Opened straight from disk, the browser blocks the data files, so every table
+// stays empty. Say so instead of showing a blank page.
+if (location.protocol === 'file:') document.write('<div style="background:#5a1d1d;color:#fff;padding:12px 16px;' +
+  'font-size:14px">This page was opened as a file, so the browser blocks its data. Start the site server ' +
+  '(<code>python database/serve_site.py</code>) and open <a style="color:#d6dae0" ' +
+  'href="http://localhost:8090/">http://localhost:8090/</a> instead.</div>');
+</script>
+<main><h1>Team Analytics</h1>
+<div class="sub">Every elite team in one grid. Click a column to sort; open a team for its schedule, stats and
+  leaders. <span id="count"></span></div>
+<div class="controls"><select id="season"><option value="2026">2026</option><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option></select><select id="split"><option value="all">All games</option><option value="vs_power4">vs Power 4</option><option value="conference">Conference</option><option value="non_conference">Non-conference</option><option value="home">Home</option><option value="away">Away</option></select>
+  <div class="multi" id="conf"><button type="button" class="multi-btn">All conferences</button><div class="multi-panel"><div class="multi-actions"><button type="button" class="linkbtn" data-all>Select all</button><button type="button" class="linkbtn" data-none>Clear</button></div><div class="multi-list"></div></div></div></div>
+<details class="key"><summary>How ratings work</summary><dl><dt>Method</dt><dd>Every elite team is ranked on each stat in a unit (1 is best). A team's unit average is the mean of those ranks, and the rating ranks the averages again: the lowest average is #1. Garbage time is left out of the play-by-play stats.</dd><dt>Offense</dt><dd>Points per game; Yards per game; Yards per play; EPA per play; Success rate; Explosive play rate; 3rd down pct; Turnovers per game.</dd><dt>Rushing offense</dt><dd>Yards per carry; Rushing yards per game; Rush EPA per play; Rush success rate; Explosive run rate (10+); Rushing TDs per game.</dd><dt>Passing offense</dt><dd>Yards per pass attempt; Passing yards per game; Completion pct; Pass EPA per dropback; Pass success rate; Explosive pass rate (20+); Passing TDs per game; Interception rate.</dd><dt>Offensive line</dt><dd>Sack rate allowed; Stuff rate (runs for no gain or a loss); Line yards per carry; Power success (3rd/4th or goal to go, 1-2 yards).</dd><dt>Offensive success</dt><dd>Success rate; Rush success rate; Pass success rate; Standard-down success rate; Passing-down success rate; 3rd down pct.</dd><dt>Defense</dt><dd>Points allowed per game; Yards allowed per game; Yards per play allowed; EPA per play allowed; Success rate allowed; Explosive play rate allowed; 3rd down pct allowed; Yards per carry allowed; Yards per pass attempt allowed; Sack rate; Tackles for loss per game; Takeaways per game.</dd><dt>Rushing defense</dt><dd>Yards per carry allowed; Rushing yards allowed per game; Rush EPA per play allowed; Rush success rate allowed; Explosive runs allowed (10+); Rushing TDs allowed per game.</dd><dt>Passing defense</dt><dd>Yards per pass attempt allowed; Passing yards allowed per game; Completion pct allowed; Pass EPA per dropback allowed; Pass success rate allowed; Explosive passes allowed (20+); Passing TDs allowed per game; Interception rate.</dd><dt>Defensive line</dt><dd>Sack rate; Stuff rate (runs stopped for no gain or a loss); Line yards per carry allowed; Power success allowed (3rd/4th or goal to go, 1-2 yards); Tackles for loss per game.</dd><dt>Defensive success</dt><dd>Success rate allowed; Rush success rate allowed; Pass success rate allowed; Standard-down success rate allowed; Passing-down success rate allowed; 3rd down pct allowed.</dd></dl></details>
+<div class="table-wrap"><table id="grid"></table></div>
+<p class="note">Ratings are ranks among all Power 4 teams; picking conferences narrows the list without
+  re-ranking it.</p>
+<script src="../assets/multi.js?v=20260925213907"></script>
+<script src="../assets/teams.js?v=20260925213907"></script></main>
+<footer><img src="../assets/brand/mark.png" alt="">
+<div class="tagline">Real football. Real insights.</div>
+<div>Power 4 and Notre Dame only.
+Built 2026-09-25 21:40 UTC.</div></footer>
+<script>
+// Light/dark toggle. Each logo is kept in a version for dark backgrounds and
+// one for light; swap every one to match the theme, including logos the page
+// draws later.
+(function () {
+  const root = document.documentElement;
+  const fit = img => {
+    const light = root.dataset.theme === 'light';
+    if (light && img.src.includes('/logos/on-dark/')) img.src = img.src.replace('/on-dark/', '/on-light/');
+    if (!light && img.src.includes('/logos/on-light/')) img.src = img.src.replace('/on-light/', '/on-dark/');
+  };
+  const fitAll = () => document.querySelectorAll('img').forEach(fit);
+  new MutationObserver(list => list.forEach(m => m.addedNodes.forEach(n => {
+    if (n.nodeType !== 1) return;
+    if (n.tagName === 'IMG') fit(n); else n.querySelectorAll('img').forEach(fit);
+  }))).observe(document.body, { childList: true, subtree: true });
+  fitAll();
+  // signed in? the auth library keeps its session in localStorage, so the
+  // button can say so without loading it on every page
+  const signin = document.getElementById('signin-btn');
+  try {
+    for (const key of Object.keys(localStorage)) {
+      if (!/^sb-.*-auth-token$/.test(key)) continue;
+      const saved = JSON.parse(localStorage.getItem(key) || '{}');
+      const until = (saved.expires_at || 0) * 1000;
+      if (until > Date.now()) {
+        signin.textContent = 'Account';
+        signin.classList.add('on');
+        signin.title = (saved.user && saved.user.email) || 'Signed in';
+      }
+    }
+  } catch (e) {}
+  const advBtn = document.getElementById('adv-btn'), advMenu = document.getElementById('adv-menu');
+  const setAdv = open => {
+    advMenu.classList.toggle('open', open);
+    advBtn.setAttribute('aria-expanded', String(open));
+    advBtn.classList.toggle('open', open);
+  };
+  // On a pointer that can hover, the stylesheet opens the menu on the way past
+  // and JS stays out of it. Where there is no hover - a phone - the first tap
+  // opens the menu and the second follows the link, which is what a tap on a
+  // menu button should do.
+  const hovers = window.matchMedia('(hover: hover)').matches;
+  setAdv(advBtn.classList.contains('on'));
+  advBtn.onclick = e => {
+    if (advBtn.classList.contains('on')) {      // already inside the section
+      e.preventDefault();
+      setAdv(!advMenu.classList.contains('open'));
+      return;
+    }
+    if (!hovers && !advMenu.classList.contains('open')) {
+      e.preventDefault();                        // first tap opens it
+      setAdv(true);
+      return;
+    }
+    setAdv(true);
+  };
+  if (hovers) {
+    // the pointer crosses a little header between the button and the menu, so
+    // closing waits a moment rather than snapping shut under the mouse
+    let shut;
+    const open = () => { clearTimeout(shut); setAdv(true); };
+    const close = () => {
+      clearTimeout(shut);
+      shut = setTimeout(() => { if (!advBtn.classList.contains('on')) setAdv(false); }, 220);
+    };
+    [advBtn, advMenu].forEach(el => {
+      el.addEventListener('mouseenter', open);
+      el.addEventListener('mouseleave', close);
+    });
+  } else {
+    // a tap anywhere else puts it away again
+    document.addEventListener('click', e => {
+      if (advBtn.classList.contains('on')) return;
+      if (!advBtn.contains(e.target) && !advMenu.contains(e.target)) setAdv(false);
+    });
+  }
+  document.getElementById('theme-toggle').onclick = () => {
+    const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+    root.dataset.theme = next;
+    try { localStorage.setItem('ca-theme', next); } catch (e) {}
+    fitAll();
+  };
+})();
+</script>
+</body></html>
