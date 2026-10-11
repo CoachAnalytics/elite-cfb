@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CoachAnalytics has moved</title>
+<link rel="canonical" href="https://fbcoachanalytics.com/">
+<meta name="robots" content="noindex">
+<meta http-equiv="refresh" content="0; url=https://fbcoachanalytics.com/">
+<script>
+// Carry the visitor to the same page on the new domain rather than dumping
+// everyone on the front page: a bookmarked team profile should still open a
+// team profile. The old site lived under /elite-cfb, the new one at the root.
+(function () {
+  var path = location.pathname.replace(/^\/elite-cfb/, '');
+  location.replace('https://fbcoachanalytics.com' + (path || '/') + location.search + location.hash);
+})();
+</script>
+<style>
+ body { background:#0d0f12; color:#e8eaed; font:16px/1.6 -apple-system,Segoe UI,Roboto,sans-serif;
+        display:grid; place-items:center; min-height:100vh; margin:0; text-align:center; padding:24px }
+ a { color:#e06a74 }
+</style>
+</head>
+<body>
+<div>
+  <h1>CoachAnalytics has moved</h1>
+  <p>We are now at <a href="https://fbcoachanalytics.com/">fbcoachanalytics.com</a>.</p>
+</div>
+</body>
+</html>
