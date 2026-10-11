@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>(function () { let t = 'dark'; try { t = localStorage.getItem('ca-theme') || 'dark'; } catch (e) {}
+  document.documentElement.dataset.theme = t; })();</script>
+<title>Start here | CoachAnalytics</title>
+<link rel="icon" type="image/png" href="../assets/brand/favicon.png">
+<link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Montserrat:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=20261011020541">
+<script>
+// How far this page sits below the site root, for the paths in the data files.
+window.CA_UP = '../';
+
+// Every data request is stamped with this build, so a copy cached from an
+// earlier build is never reused, and is retried if the download is cut short
+// (this machine's antivirus sometimes drops larger local transfers).
+const _fetch = window.fetch;
+window.fetch = async (url, opts) => {
+  // only our own files are stamped: adding it to another site's request (the
+  // members API, say) would arrive as an unexpected query parameter
+  const raw = typeof url === 'string' ? url : null;
+  const ours = raw !== null && !raw.includes('://');
+  if (!ours) return _fetch(url, opts);
+  const stamped = raw + (raw.includes('?') ? '&' : '?') + 'v=20261011020541';
+  let last;
+  // a cut-off transfer is worth several more goes: on this machine the
+  // antivirus drops roughly one large local download in three
+  for (let attempt = 0; attempt < 10; attempt++) {
+    try {
+      const r = await _fetch(stamped, opts);
+      // read as bytes: reading a picture or a gzip as text would mangle it
+      const body = await r.arrayBuffer();
+      return new Response(body, { status: r.status, statusText: r.statusText, headers: r.headers });
+    } catch (e) {
+      last = e;
+      await new Promise(done => setTimeout(done, Math.min(250 * (attempt + 1), 2000)));
+    }
+  }
+  throw last;
+};
+</script>
+</head><body>
+<header class="site">
+  <a class="brand" href="../index.html" aria-label="CoachAnalytics home">
+    <img class="mark" src="../assets/brand/mark.png" alt="">
+    <img class="word" src="../assets/brand/wordmark.png" alt="CoachAnalytics">
+    <span class="tier">POWER 4</span></a>
+  <nav><a href="../stats/index.html" class="">Statistics</a><a href="../standings/index.html" class="">Standings</a><a href="../rankings/index.html" class="">Rankings</a><a href="../games/index.html" class="">Games</a><a href="../teams/index.html" class="">Teams</a><a href="../positions/index.html" class="">Positions</a><a href="../players/index.html" class="">Players</a><a href="../situations/index.html" class="">Situations</a></nav>
+  <a class="adv-btn on" href="../advanced/team.html" id="adv-btn"
+     aria-expanded="false" aria-controls="adv-menu">Advanced Analytics</a>
+  <a class="signin-btn" id="signin-btn" href="../members/index.html">Sign in</a>
+  <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch between light and dark mode">
+    <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  </button>
+</header>
+<nav class="subnav" id="adv-menu"><a href="../advanced/start.html" class="active">Start here</a><a href="../advanced/heisman.html" class="">Heisman Watch</a><a href="../advanced/pace.html" class="">Pace</a><a href="../advanced/market.html" class="">Model vs Market</a><a href="../advanced/team.html" class="">Team Profile</a><a href="../advanced/red_zone.html" class="">Red Zone</a><a href="../advanced/short_yardage.html" class="">Short Yardage</a><a href="../advanced/third_down.html" class="">Third Down</a><a href="../advanced/early_downs.html" class="">Early Downs</a><a href="../advanced/second_half.html" class="">Second Half</a><a href="../advanced/fourth_quarter.html" class="">Fourth Quarter</a><a href="../advanced/after_play.html" class="">What Happens</a><a href="../advanced/drives.html" class="">Drive Analysis</a><a href="../advanced/player_splits.html" class="">Player Splits</a><a href="../advanced/compare.html" class="">Player Comparison</a><a href="../advanced/strengths.html" class="">Strengths</a><a href="../advanced/matchup.html" class="">Matchup</a><a href="../advanced/chart.html" class="">Chart Builder</a></nav>
+<script>
+// Opened straight from disk, the browser blocks the data files, so every table
+// stays empty. Say so instead of showing a blank page.
+if (location.protocol === 'file:') document.write('<div style="background:#5a1d1d;color:#fff;padding:12px 16px;' +
+  'font-size:14px">This page was opened as a file, so the browser blocks its data. Start the site server ' +
+  '(<code>python database/serve_site.py</code>) and open <a style="color:#d6dae0" ' +
+  'href="http://localhost:8090/">http://localhost:8090/</a> instead.</div>');
+</script>
+<main><h1>Start here</h1>
+<div class="sub">Everything below is yours now. <span id="access" hidden></span></div>
+<div class="doors">
+  <a class="door" href="matchup.html?a=2305&amp;b=254&amp;season=2026">
+      <span class="kicker">The best game left this week</span>
+      <span class="headline">Kansas <span class="at">at</span> <span class="rk">#12</span> Utah</span>
+      <span class="why">Sunday 11 October &middot; the closest game on the board, 15.5 points between them</span>
+      <span class="go">Open the matchup &rarr;</span></a>
+  <div class="door">
+    <span class="kicker">Your team</span>
+    <span class="headline">Pick one, once</span>
+    <span class="why">Every page remembers it afterwards, so the site opens on your team.</span>
+    <select id="team-pick"><option value="">Choose a team&hellip;</option><option value="333">Alabama</option><option value="12">Arizona</option><option value="9">Arizona State</option><option value="8">Arkansas</option><option value="2">Auburn</option><option value="239">Baylor</option><option value="103">Boston College</option><option value="252">BYU</option><option value="25">California</option><option value="2132">Cincinnati</option><option value="228">Clemson</option><option value="38">Colorado</option><option value="150">Duke</option><option value="57">Florida</option><option value="52">Florida State</option><option value="61">Georgia</option><option value="59">Georgia Tech</option><option value="248">Houston</option><option value="356">Illinois</option><option value="84">Indiana</option><option value="2294">Iowa</option><option value="66">Iowa State</option><option value="2305">Kansas</option><option value="2306">Kansas State</option><option value="96">Kentucky</option><option value="97">Louisville</option><option value="99">LSU</option><option value="120">Maryland</option><option value="2390">Miami</option><option value="130">Michigan</option><option value="127">Michigan State</option><option value="135">Minnesota</option><option value="344">Mississippi State</option><option value="142">Missouri</option><option value="152">NC State</option><option value="158">Nebraska</option><option value="153">North Carolina</option><option value="77">Northwestern</option><option value="87">Notre Dame</option><option value="194">Ohio State</option><option value="201">Oklahoma</option><option value="197">Oklahoma State</option><option value="145">Ole Miss</option><option value="2483">Oregon</option><option value="213">Penn State</option><option value="221">Pittsburgh</option><option value="2509">Purdue</option><option value="164">Rutgers</option><option value="2567">SMU</option><option value="2579">South Carolina</option><option value="24">Stanford</option><option value="183">Syracuse</option><option value="2628">TCU</option><option value="2633">Tennessee</option><option value="251">Texas</option><option value="245">Texas A&M</option><option value="2641">Texas Tech</option><option value="2116">UCF</option><option value="26">UCLA</option><option value="30">USC</option><option value="254">Utah</option><option value="238">Vanderbilt</option><option value="258">Virginia</option><option value="259">Virginia Tech</option><option value="154">Wake Forest</option><option value="264">Washington</option><option value="277">West Virginia</option><option value="275">Wisconsin</option></select>
+  </div>
+  <a class="door" href="chart.html">
+    <span class="kicker">Make something worth posting</span>
+    <span class="headline">Chart Builder</span>
+    <span class="why">Any two measures, every team as its own logo, saved as a picture with our mark on it.</span>
+    <span class="go">Build a chart &rarr;</span></a>
+</div>
+<h2>What each tab is for</h2>
+<ul class="tab-notes"><li><a href="../advanced/heisman.html">Heisman Watch</a><span>Who should win it and who actually will, which are rarely the same ten names.</span></li><li><a href="../advanced/market.html">Model vs Market</a><span>Where our numbers and the betting market disagree, with every disagreement graded.</span></li><li><a href="../advanced/pace.html">Pace</a><span>Who plays fast, how often, and whether the speed actually suits them.</span></li><li><a href="../advanced/team.html">Team Profile</a><span>Every number one team has, ranked against the other 67, best and worst first.</span></li><li><a href="../advanced/matchup.html">Matchup</a><span>Any two teams, one side of the ball against the other, with the shapes that show where the game is won.</span></li><li><a href="../advanced/strengths.html">Strengths</a><span>What a team is good and bad at, decided by the numbers rather than by reputation.</span></li><li><a href="../advanced/chart.html">Chart Builder</a><span>Any two measures against each other, every team as its own logo, saved as a picture worth posting.</span></li><li><a href="../advanced/red_zone.html">Red Zone</a><span>Inside the 20: who finishes drives with touchdowns and who settles for three.</span></li><li><a href="../advanced/short_yardage.html">Short Yardage</a><span>A yard to go, or two: who gets it, how they get it, and against whom.</span></li><li><a href="../advanced/third_down.html">Third Down</a><span>Third down by distance, and what each one is worth - short is a different sport from long.</span></li><li><a href="../advanced/early_downs.html">Early Downs</a><span>First and second down, where a drive is decided before anyone notices.</span></li><li><a href="../advanced/second_half.html">Second Half</a><span>Who comes out of the tunnel different, with a lead and from behind.</span></li><li><a href="../advanced/fourth_quarter.html">Fourth Quarter</a><span>The last quarter, and the one-score games inside it.</span></li><li><a href="../advanced/after_play.html">What Happens</a><span>The snap after a moment: an explosive play, a stuffed run, a third down converted.</span></li><li><a href="../advanced/drives.html">Drive Analysis</a><span>Drives rather than plays: how they start, how far they go, what they are worth.</span></li><li><a href="../advanced/compare.html">Player Comparison</a><span>Two players side by side, the same questions asked of both, rates before totals.</span></li><li><a href="../advanced/player_splits.html">Player Splits</a><span>A player's season cut by down, distance and field position.</span></li></ul>
+<p class="note">Your subscription reaches every one of them. Cancel any time from
+  <a href="../members/index.html">your account</a>.</p>
+<script>window.CA_PRIVATE_DATA = true;</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script src="../assets/member-config.js?v=20261011020541"></script>
+<script src="../assets/member-data.js?v=20261011020541"></script>
+<script src="../assets/gate.js?v=20261011020541"></script>
+<script>window.START = { season: "2026" };</script>
+<script src="../assets/engine.js?v=20261011020541"></script>
+<script src="../assets/start.js?v=20261011020541"></script></main>
+<footer><img src="../assets/brand/mark.png" alt="">
+<div class="tagline">Real football. Real insights.</div>
+<div>Power 4 and Notre Dame only.
+Built 2026-10-11 02:06 UTC.</div></footer>
+<script>
+// Light/dark toggle. Each logo is kept in a version for dark backgrounds and
+// one for light; swap every one to match the theme, including logos the page
+// draws later.
+(function () {
+  const root = document.documentElement;
+  const fit = img => {
+    const light = root.dataset.theme === 'light';
+    if (light && img.src.includes('/logos/on-dark/')) img.src = img.src.replace('/on-dark/', '/on-light/');
+    if (!light && img.src.includes('/logos/on-light/')) img.src = img.src.replace('/on-light/', '/on-dark/');
+  };
+  const fitAll = () => document.querySelectorAll('img').forEach(fit);
+  new MutationObserver(list => list.forEach(m => m.addedNodes.forEach(n => {
+    if (n.nodeType !== 1) return;
+    if (n.tagName === 'IMG') fit(n); else n.querySelectorAll('img').forEach(fit);
+  }))).observe(document.body, { childList: true, subtree: true });
+  fitAll();
+  // signed in? the auth library keeps its session in localStorage, so the
+  // button can say so without loading it on every page
+  const signin = document.getElementById('signin-btn');
+  try {
+    for (const key of Object.keys(localStorage)) {
+      if (!/^sb-.*-auth-token$/.test(key)) continue;
+      const saved = JSON.parse(localStorage.getItem(key) || '{}');
+      const until = (saved.expires_at || 0) * 1000;
+      if (until > Date.now()) {
+        signin.textContent = 'Account';
+        signin.classList.add('on');
+        signin.title = (saved.user && saved.user.email) || 'Signed in';
+      }
+    }
+  } catch (e) {}
+  const advBtn = document.getElementById('adv-btn'), advMenu = document.getElementById('adv-menu');
+  const setAdv = open => {
+    advMenu.classList.toggle('open', open);
+    advBtn.setAttribute('aria-expanded', String(open));
+    advBtn.classList.toggle('open', open);
+  };
+  // On a pointer that can hover, the stylesheet opens the menu on the way past
+  // and JS stays out of it. Where there is no hover - a phone - the first tap
+  // opens the menu and the second follows the link, which is what a tap on a
+  // menu button should do.
+  const hovers = window.matchMedia('(hover: hover)').matches;
+  setAdv(advBtn.classList.contains('on'));
+  advBtn.onclick = e => {
+    if (advBtn.classList.contains('on')) {      // already inside the section
+      e.preventDefault();
+      setAdv(!advMenu.classList.contains('open'));
+      return;
+    }
+    if (!hovers && !advMenu.classList.contains('open')) {
+      e.preventDefault();                        // first tap opens it
+      setAdv(true);
+      return;
+    }
+    setAdv(true);
+  };
+  if (hovers) {
+    // the pointer crosses a little header between the button and the menu, so
+    // closing waits a moment rather than snapping shut under the mouse
+    let shut;
+    const open = () => { clearTimeout(shut); setAdv(true); };
+    const close = () => {
+      clearTimeout(shut);
+      shut = setTimeout(() => { if (!advBtn.classList.contains('on')) setAdv(false); }, 220);
+    };
+    [advBtn, advMenu].forEach(el => {
+      el.addEventListener('mouseenter', open);
+      el.addEventListener('mouseleave', close);
+    });
+  } else {
+    // a tap anywhere else puts it away again
+    document.addEventListener('click', e => {
+      if (advBtn.classList.contains('on')) return;
+      if (!advBtn.contains(e.target) && !advMenu.contains(e.target)) setAdv(false);
+    });
+  }
+  document.getElementById('theme-toggle').onclick = () => {
+    const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+    root.dataset.theme = next;
+    try { localStorage.setItem('ca-theme', next); } catch (e) {}
+    fitAll();
+  };
+})();
+</script>
+</body></html>
