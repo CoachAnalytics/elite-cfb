@@ -1,0 +1,1 @@
+window.CA_SUPABASE = { url: "https://oqiyhewvdwlnzblfmluk.supabase.co", anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xaXloZXd2ZHdsbnpibGZtbHVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MjMwNDQsImV4cCI6MjEwNDk5OTA0NH0.ZK-LxSpqEKFfty-lNVuITDDnoH_3mbYgpyinUzby9W8" };
