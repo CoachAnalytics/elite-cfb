@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /members/
+Disallow: /advanced/
+
+Sitemap: https://fbcoachanalytics.com/sitemap.xml
